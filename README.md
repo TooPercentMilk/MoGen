@@ -14,12 +14,12 @@
 <b>ChatGPT</b>	*evaluation-only*  
 
 ## November 21  
-Progress Report Due  
+<b>Progress Report Due</b>  
 Have a running framework written for each model (besides ChatGPT)  
 Do write-up  
 
 ## December 5  
-Poster Due
-Fine tune models
-Evaluate best model
+<b>Poster Due</b>  
+Fine tune models  
+Evaluate best model  
 Make Poster
