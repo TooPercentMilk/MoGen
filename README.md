@@ -18,7 +18,7 @@ Progress Report Due
 Have a running framework written for each model (besides ChatGPT)  
 Do write-up  
 
-**December 5**  
+## December 5  
 Poster Due
 Fine tune models
 Evaluate best model
