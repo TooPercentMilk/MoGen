@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import nltk
+import gensim.downloader
 import tensorflow as tf
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -94,14 +95,14 @@ def main():
     genres_encoded = mlb.fit_transform(data['genre'])
 
     # Load the pre-trained GloVe embeddings
-    embeddings_index = {}
-    path = '../glove.6B/glove.6B.100d.txt'
-    with open(path, encoding='utf-8') as f:
-        for line in f:
-            values = line.split()
-            word = values[0]
-            coefs = np.asarray(values[1:], dtype='float32')
-            embeddings_index[word] = coefs
+    # embeddings_index = {}
+    # path = '../glove.6B/glove.6B.100d.txt'
+    # with open(path, encoding='utf-8') as f:
+    #     for line in f:
+    #         values = line.split()
+    #         word = values[0]
+    #         coefs = np.asarray(values[1:], dtype='float32')
+    #         embeddings_index[word] = coefs
 
     # Tokenize and pad the text sequences
     tokenizer = Tokenizer()
@@ -111,11 +112,13 @@ def main():
     padded_sequences = pad_sequences(sequences, maxlen=300)
 
     # Create the embedding matrix
-    embedding_matrix = np.zeros((len(word_index) + 1, 100))
-    for word, i in word_index.items():
-        embedding_vector = embeddings_index.get(word)
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
+    # embedding_matrix = np.zeros((len(word_index) + 1, 100))
+    # for word, i in word_index.items():
+    #     embedding_vector = embeddings_index.get(word)
+    #     if embedding_vector is not None:
+    #         embedding_matrix[i] = embedding_vector
+    embed = gensim.downloader.load("glove-wiki-gigaword-100")
+    embedding_matrix = embed.get_normed_vectors()
 
     X_train, X_temp, y_train, y_temp = train_test_split(padded_sequences, genres_encoded, test_size=0.3, random_state=42)
     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
