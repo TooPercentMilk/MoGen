@@ -81,6 +81,7 @@ def main():
     data = pd.read_csv('data/train.csv')
 
     # Preprocess the text
+    nltk.download('punkt')
     nltk.download('stopwords')
     nltk.download('wordnet')
 
