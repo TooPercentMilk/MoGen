@@ -114,8 +114,8 @@ def main():
     # Create the embedding matrix
     embedding_matrix = np.zeros((len(word_index) + 1, 100))
     for word, i in word_index.items():
-        embedding_vector = embed[word]
-        if embedding_vector is not None:
+        if word in embed:
+            embedding_vector = embed[word]
             embedding_matrix[i] = embedding_vector
 
     X_train, X_temp, y_train, y_temp = train_test_split(padded_sequences, genres_encoded, test_size=0.3, random_state=42)
