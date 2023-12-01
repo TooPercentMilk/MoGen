@@ -56,26 +56,25 @@ def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=5):
         print()
         for h in hidden:
             for lr in learning_rates:
-                model = compile_model(embedding_matrix, word_index, mlb, h, d, lr)
-
+                best_val = 0
                 kf = KFold(n_splits=k, shuffle=True, random_state=42)
                 for train_index, test_index in kf.split(X):
                     X_train, X_val = X[train_index], X[test_index]
                     y_train, y_val = Y[train_index], Y[test_index]
 
                     checkpoint_path = "models/LSTM_checkpoint.h5"
-                    model_checkpoint = ModelCheckpoint(checkpoint_path, save_best_only=True, save_weights_only=True, monitor='val_accuracy', mode='max', verbose=1)
+                    model_checkpoint = ModelCheckpoint(checkpoint_path, save_best_only=True, save_weights_only=True, monitor='val_accuracy', mode='max', verbose=2)
                     early_stopping = EarlyStopping(monitor='val_accuracy', patience=3, mode='max', verbose=1)
-
+                    
+                    model = compile_model(embedding_matrix, word_index, mlb, h, d, lr)
                     history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping])
-                    best_val = max(history.history['val_accuracy'])
-                    print(h, d, lr)
-                    print(best_val)
-                    if best_val > high_score:
-                        high_score = best_val
-                        best_params['dropout'] = d
-                        best_params['hidden layers'] = h
-                        best_params['learning rate'] = lr
+                    best_val += max(history.history['val_accuracy'])
+                best_val /= k
+                if best_val > high_score:
+                    high_score = best_val
+                    best_params['dropout'] = d
+                    best_params['hidden layers'] = h
+                    best_params['learning rate'] = lr
     print('Accuracy:', high_score)
     print(best_params)
 
