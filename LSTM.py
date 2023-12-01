@@ -69,6 +69,8 @@ def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=5):
 
                     history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping])
                     best_val = max(history.history['val_accuracy'])
+                    print(h, d, lr)
+                    print(best_val)
                     if best_val > high_score:
                         high_score = best_val
                         best_params['dropout'] = d
