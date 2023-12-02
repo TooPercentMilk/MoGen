@@ -71,7 +71,7 @@ def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=5):
                     best_val += max(history.history['val_accuracy'])
                 best_val /= k
                 if best_val > high_score:
-                    print("High Score updated with", d, h, lr)
+                    print("High Score of", best_val, "updated with", d, h, lr)
                     high_score = best_val
                     best_params['dropout'] = d
                     best_params['hidden layers'] = h
