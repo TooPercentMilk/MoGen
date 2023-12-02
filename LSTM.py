@@ -42,10 +42,10 @@ def train_model(model, X_train, y_train, X_val, y_val):
     history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping])
     model.load_weights(checkpoint_path)
 
-def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=5):
+def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=3):
     dropouts = [0.1, 0.2, 0.3, 0.4]
     hidden = [32, 64, 128, 256, 512]
-    learning_rates = [0.00005, 0.0001, 0.0005, 0.001, 0.005]
+    learning_rates = [0.00005, 0.0001, 0.0005, 0.001]
     high_score = 0
     best_params = {}
 
@@ -56,6 +56,7 @@ def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=5):
         print()
         for h in hidden:
             for lr in learning_rates:
+                print(d, h, lr)
                 best_val = 0
                 kf = KFold(n_splits=k, shuffle=True, random_state=42)
                 for train_index, test_index in kf.split(X):
@@ -67,7 +68,7 @@ def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=5):
                     early_stopping = EarlyStopping(monitor='val_accuracy', patience=3, mode='max', verbose=1)
 
                     model = compile_model(embedding_matrix, word_index, mlb, h, d, lr)
-                    history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping])
+                    history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping], verbose=0)
                     best_val += max(history.history['val_accuracy'])
                 best_val /= k
                 if best_val > high_score:
