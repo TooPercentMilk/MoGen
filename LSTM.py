@@ -44,7 +44,7 @@ def train_model(model, X_train, y_train, X_val, y_val):
 
 def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=3):
     dropouts = [0.3, 0.4]
-    hidden = [32, 64, 128, 256, 512]
+    hidden = [64, 128, 256, 512]
     learning_rates = [0.00005, 0.0001, 0.0005, 0.001]
     high_score = 0
     best_params = {}
@@ -132,3 +132,4 @@ if __name__ == "__main__":
 #contenders: 
 # 0.2, 64, 0.0005
 # 0.2 256 0.001
+# 0.3 32 0.001
