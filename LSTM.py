@@ -155,6 +155,7 @@ def main():
     y_pred = model.predict(X_test)
     y_pred_classes = np.argmax(y_pred, axis=1)
     y_pred_onehot = to_categorical(y_pred_classes, num_classes=10)
+    y_test_classes = np.argmax(y_test, axis=1)
 
     # Calculate evaluation metrics
     accuracy = accuracy_score(y_test, y_pred_onehot)
@@ -167,10 +168,10 @@ def main():
     print(f'Recall: {recall}')
     print(f'F1-score: {f1}')
     
-    print(y_pred_classes)
-    print()
-    print(y_test)
-    confusion(y_pred_classes, y_test)
+    # print(y_pred_classes)
+    # print()
+    # print(y_test)
+    confusion(y_pred_classes, y_test_classes)
 
 if __name__ == "__main__":
     main()
