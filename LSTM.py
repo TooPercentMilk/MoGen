@@ -148,8 +148,8 @@ def main():
     model = compile_model(embedding_matrix, word_index, mlb, 64, 0.4)
     plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
-    model.load_weights('models/LSTM_checkpoint.h5')
     history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping], verbose=1)
+    model.load_weights(checkpoint_path)
 
     # Make predictions on the test set
     y_pred = model.predict(X_test)
