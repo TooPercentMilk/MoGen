@@ -26,11 +26,14 @@ def confusion(true_labels, predicted_labels):
     conf_matrix = confusion_matrix(true_labels, predicted_labels)
 
     # Display confusion matrix as a heatmap using seaborn
-    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', cbar=False, xticklabels=labels,
+    sns.heatmap(conf_matrix,
+            annot=True,
+            fmt='g',
+            xticklabels=labels,
             yticklabels=labels)
-    plt.xlabel('Predicted')
-    plt.ylabel('True')
-    plt.title('Confusion Matrix')
+    plt.ylabel('Actual',fontsize=13)
+    plt.xlabel('Prediction',fontsize=13)
+    plt.title('Confusion Matrix',fontsize=17)
     plt.show()
 
 def preprocess_text(text):
@@ -150,6 +153,14 @@ def main():
 
     history = model.fit(X_train, y_train, batch_size=32, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping], verbose=1)
     model.load_weights(checkpoint_path)
+
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Model loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
+    plt.show()
 
     # Make predictions on the test set
     y_pred = model.predict(X_test)
