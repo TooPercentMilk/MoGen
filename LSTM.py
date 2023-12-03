@@ -167,6 +167,9 @@ def main():
     print(f'Recall: {recall}')
     print(f'F1-score: {f1}')
     
+    print(y_pred_classes)
+    print()
+    print(y_test)
     confusion(y_pred_classes, y_test)
 
 if __name__ == "__main__":
