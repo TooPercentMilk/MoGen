@@ -33,7 +33,7 @@ def confusion(true_labels, predicted_labels):
             yticklabels=labels)
     plt.ylabel('Actual',fontsize=13)
     plt.xlabel('Prediction',fontsize=13)
-    plt.title('Confusion Matrix',fontsize=17)
+    plt.title('LSTM',fontsize=17)
     plt.show()
 
 def preprocess_text(text):
