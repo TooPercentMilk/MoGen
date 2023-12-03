@@ -43,9 +43,8 @@ def train_model(model, X_train, y_train, X_val, y_val):
     model.load_weights(checkpoint_path)
 
 def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=3):
-    dropouts = [0.3, 0.4]
-    hidden = [64, 128, 256, 512]
-    learning_rates = [0.00005, 0.0001, 0.0005, 0.001]
+    dropouts = [0.2, 0.3, 0.4]
+    hidden = [32, 64, 128, 256, 512]
     high_score = 0
     best_params = {}
 
@@ -55,28 +54,27 @@ def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=3):
         print('Current best:', high_score)
         print()
         for h in hidden:
-            for lr in learning_rates:
-                print(d, h, lr)
-                best_val = 0
-                kf = KFold(n_splits=k, shuffle=True, random_state=42)
-                for train_index, test_index in kf.split(X):
-                    X_train, X_val = X[train_index], X[test_index]
-                    y_train, y_val = Y[train_index], Y[test_index]
+            print(d, h)
+            best_val = 0
+            kf = KFold(n_splits=k, shuffle=True, random_state=42)
+            for train_index, test_index in kf.split(X):
+                X_train, X_val = X[train_index], X[test_index]
+                y_train, y_val = Y[train_index], Y[test_index]
 
-                    checkpoint_path = "models/LSTM_checkpoint.h5"
-                    model_checkpoint = ModelCheckpoint(checkpoint_path, save_best_only=True, save_weights_only=True, monitor='val_accuracy', mode='max', verbose=0)
-                    early_stopping = EarlyStopping(monitor='val_accuracy', patience=3, mode='max', verbose=1)
+                checkpoint_path = "models/LSTM_checkpoint.h5"
+                model_checkpoint = ModelCheckpoint(checkpoint_path, save_best_only=True, save_weights_only=True, monitor='val_accuracy', mode='max', verbose=0)
+                early_stopping = EarlyStopping(monitor='val_accuracy', patience=3, mode='max', verbose=1)
 
-                    model = compile_model(embedding_matrix, word_index, mlb, h, d, lr)
-                    history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping], verbose=0)
-                    best_val += max(history.history['val_accuracy'])
-                best_val /= k
-                if best_val > high_score:
-                    print("High Score of", best_val, "updated with", d, h, lr)
-                    high_score = best_val
-                    best_params['dropout'] = d
-                    best_params['hidden layers'] = h
-                    best_params['learning rate'] = lr
+                model = compile_model(embedding_matrix, word_index, mlb, h, d)
+                history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping], verbose=0)
+                best_val += max(history.history['val_accuracy'])
+            best_val /= k
+            print(best_val)
+            if best_val > high_score:
+                print("High Score of", best_val, "updated with", d, h)
+                high_score = best_val
+                best_params['dropout'] = d
+                best_params['hidden layers'] = h
     print('Accuracy:', high_score)
     print(best_params)
 
@@ -133,3 +131,6 @@ if __name__ == "__main__":
 # 0.2, 64, 0.0005
 # 0.2 256 0.001
 # 0.3 32 0.001
+# 0.3 64 0.001
+# 0.3 128 0.001
+# 0.4 64 0.001
