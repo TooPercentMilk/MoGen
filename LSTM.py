@@ -15,6 +15,23 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Embedding, LSTM, Dense
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.utils import to_categorical
+from keras.utils import plot_model
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+labels = ['action', 'adventure', 'crime', 'family', 'fantasy', 'horror', 'mystery', 'romance', 'scifi', 'thriller']
+
+def confusion(true_labels, predicted_labels):
+    conf_matrix = confusion_matrix(true_labels, predicted_labels)
+
+    # Display confusion matrix as a heatmap using seaborn
+    sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', cbar=False, xticklabels=labels,
+            yticklabels=labels)
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.title('Confusion Matrix')
+    plt.show()
 
 def preprocess_text(text):
     # Tokenize, remove stopwords, and lemmatize
@@ -41,6 +58,7 @@ def train_model(model, X_train, y_train, X_val, y_val):
 
     history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping])
     model.load_weights(checkpoint_path)
+    return history, model
 
 def hyperparameters(embedding_matrix, word_index, mlb, X, Y, k=3):
     dropouts = [0.2, 0.3, 0.4]
@@ -122,7 +140,34 @@ def main():
     X_train, X_temp, y_train, y_temp = train_test_split(padded_sequences, genres_encoded, test_size=0.3, random_state=42)
     X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
 
-    hyperparameters(embedding_matrix, word_index, mlb, X_train, y_train)
+
+    checkpoint_path = "models/LSTM_checkpoint.h5"
+    model_checkpoint = ModelCheckpoint(checkpoint_path, save_best_only=True, save_weights_only=True, monitor='val_accuracy', mode='max', verbose=1)
+    early_stopping = EarlyStopping(monitor='val_accuracy', patience=3, mode='max', verbose=1)
+
+    model = compile_model(embedding_matrix, word_index, mlb, 64, 0.4)
+    plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
+
+    model.load_weights('models/LSTM_checkpoint.h5')
+    history = model.fit(X_train, y_train, batch_size=64, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping], verbose=1)
+
+    # Make predictions on the test set
+    y_pred = model.predict(X_test)
+    y_pred_classes = np.argmax(y_pred, axis=1)
+    y_pred_onehot = to_categorical(y_pred_classes, num_classes=10)
+
+    # Calculate evaluation metrics
+    accuracy = accuracy_score(y_test, y_pred_onehot)
+    precision = precision_score(y_test, y_pred_onehot, average='macro')
+    recall = recall_score(y_test, y_pred_onehot, average='macro')
+    f1 = f1_score(y_test, y_pred_onehot, average='macro')
+
+    print(f'Accuracy: {accuracy}')
+    print(f'Precision: {precision}')
+    print(f'Recall: {recall}')
+    print(f'F1-score: {f1}')
+    
+    confusion(y_pred_classes, y_test)
 
 if __name__ == "__main__":
     main()
