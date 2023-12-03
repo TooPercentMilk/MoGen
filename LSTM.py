@@ -148,7 +148,7 @@ def main():
     model_checkpoint = ModelCheckpoint(checkpoint_path, save_best_only=True, save_weights_only=True, monitor='val_accuracy', mode='max', verbose=1)
     early_stopping = EarlyStopping(monitor='val_accuracy', patience=4, mode='max', verbose=1)
 
-    model = compile_model(embedding_matrix, word_index, mlb, 64, 0.4)
+    model = compile_model(embedding_matrix, word_index, mlb, 64, 0.2)
     plot_model(model, to_file='model_plot.png', show_shapes=True, show_layer_names=True)
 
     history = model.fit(X_train, y_train, batch_size=32, epochs=15, validation_data=(X_val, y_val), callbacks=[model_checkpoint, early_stopping], verbose=1)
