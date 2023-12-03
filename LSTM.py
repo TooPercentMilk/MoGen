@@ -44,7 +44,7 @@ def preprocess_text(text):
     filtered_tokens = [lemmatizer.lemmatize(token) for token in tokens if token not in stop_words and token.isalnum()]
     return ' '.join(filtered_tokens)
 
-def compile_model(embedding_matrix, word_index, mlb, layers=256, dropout=0.2, lr=0.001):# Define the LSTM model
+def compile_model(embedding_matrix, word_index, mlb, layers=256, dropout=0.4, lr=0.001):# Define the LSTM model
     model = Sequential()
     model.add(Embedding(len(word_index) + 1, 100, weights=[embedding_matrix], input_length=300, trainable=False))
     model.add(LSTM(layers, dropout=dropout))
