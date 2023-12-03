@@ -31,8 +31,8 @@ def confusion(true_labels, predicted_labels):
             fmt='g',
             xticklabels=labels,
             yticklabels=labels)
-    plt.ylabel('Actual',fontsize=13)
-    plt.xlabel('Prediction',fontsize=13)
+    plt.ylabel('Prediction',fontsize=13)
+    plt.xlabel('Actual',fontsize=13)
     plt.title('LSTM',fontsize=17)
     plt.show()
 
