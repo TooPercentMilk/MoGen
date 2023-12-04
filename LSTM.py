@@ -109,6 +109,7 @@ def main():
     nltk.download('wordnet')
 
     data = data[['movie_name', 'synopsis', 'genre']]
+    data['synopsis'] = data['title'] + ', ' + data['synopsis']
     data['synopsis'] = data['synopsis'].apply(preprocess_text)
 
     # Preprocess the genres
